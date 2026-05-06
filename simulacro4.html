@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Simulacro V1 – Subdirección de Procedimientos Administrativos Sancionadores</title>
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { font-family:'Segoe UI',sans-serif; background:#fff0f6; color:#222; min-height:100dvh; overflow-x:hidden; }
+
+.header { background:linear-gradient(135deg,#880e4f,#e91e8c); color:white; padding:10px 14px; display:flex; align-items:center; gap:10px; box-shadow:0 2px 8px rgba(0,0,0,.2); position:sticky; top:0; z-index:200; }
+.header-logo { font-size:1.35rem; flex-shrink:0; }
+.header-text { flex:1; min-width:0; }
+.header h1 { font-size:.86rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.header p  { font-size:.6rem; opacity:.82; margin-top:1px; }
+.header-right { flex-shrink:0; text-align:right; }
+.timer { font-size:1.45rem; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:.5px; line-height:1; }
+.t-lbl { font-size:.55rem; opacity:.65; margin-top:1px; }
+.timer.warning { color:#ffe082; }
+.timer.danger  { color:#ff6b6b; animation:pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.45} }
+.progress-wrap { background:#f8bbd0; height:3px; }
+.progress-bar  { height:3px; background:#fff; transition:width .4s; }
+
+.main { padding:12px 12px 80px; max-width:600px; margin:0 auto; }
+
+.start-screen { background:white; border-radius:14px; padding:22px 16px; box-shadow:0 2px 12px rgba(0,0,0,.08); margin-top:14px; text-align:center; }
+.start-screen h2 { font-size:1.2rem; color:#880e4f; margin-bottom:10px; line-height:1.3; }
+.info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:15px 0; }
+.info-card { background:#fce4ec; border-radius:10px; padding:11px 8px; }
+.info-card .num { font-size:1.5rem; font-weight:800; color:#880e4f; }
+.info-card .lbl { font-size:.72rem; color:#666; margin-top:2px; }
+.topic-section { text-align:left; margin:13px 0; }
+.topic-section-title { font-size:.71rem; font-weight:800; color:#880e4f; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; padding-left:8px; border-left:3px solid #e91e8c; }
+.topic-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
+.topic-pill { background:#fce4ec; border-radius:7px; padding:6px 10px; font-size:.75rem; color:#880e4f; display:flex; justify-content:space-between; gap:6px; }
+.topic-pill .cnt { font-weight:800; flex-shrink:0; }
+.level-banner { background:linear-gradient(135deg,#4a148c,#880e4f); color:white; border-radius:10px; padding:10px 12px; margin:10px 0; font-size:.78rem; text-align:left; line-height:1.45; }
+.level-banner strong { color:#ffe082; }
+.formats-banner { background:#fff3e0; border-left:3px solid #ff9800; border-radius:8px; padding:9px 11px; margin:8px 0; font-size:.74rem; text-align:left; color:#5d4037; line-height:1.5; }
+.formats-banner strong { color:#e65100; }
+
+.question-card { background:white; border-radius:12px; padding:15px 13px; box-shadow:0 2px 10px rgba(0,0,0,.07); margin-bottom:12px; animation:fadeUp .25s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)} }
+.q-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:11px; flex-wrap:wrap; gap:5px; }
+.q-badge { font-size:.66rem; font-weight:700; padding:3px 9px; border-radius:20px; text-transform:uppercase; }
+.q-right { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+.q-num { color:#aaa; font-size:.75rem; }
+.q-type { font-size:.58rem; font-weight:700; padding:2px 7px; border-radius:10px; letter-spacing:.3px; }
+.q-type.seq { background:#e0f7fa; color:#006064; }
+.q-type.rel { background:#f3e5f5; color:#4a148c; }
+.q-type.cas { background:#fff3e0; color:#e65100; }
+.q-type.dir { background:#e8f5e9; color:#2e7d32; }
+
+.passage { background:#fff0f6; border-left:4px solid #e91e8c; padding:10px 12px; border-radius:0 8px 8px 0; margin-bottom:12px; font-size:.83rem; line-height:1.7; }
+.passage-label { font-size:.64rem; font-weight:700; color:#880e4f; text-transform:uppercase; margin-bottom:5px; }
+
+.question-text { font-size:.9rem; font-weight:600; line-height:1.5; margin-bottom:13px; }
+
+.listado { background:#fafafa; border:1px solid #e0e0e0; border-radius:9px; padding:11px 13px; margin-bottom:13px; font-size:.83rem; line-height:1.6; }
+.listado-title { font-size:.67rem; font-weight:700; color:#555; text-transform:uppercase; margin-bottom:7px; letter-spacing:.3px; }
+.listado ol, .listado ul { padding-left:22px; margin:0; }
+.listado li { margin-bottom:4px; }
+
+.rel-cols { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.rel-col { background:#fafafa; border:1px solid #e0e0e0; border-radius:9px; padding:9px 10px; }
+.rel-col-title { font-size:.66rem; font-weight:800; color:#880e4f; text-transform:uppercase; margin-bottom:6px; letter-spacing:.3px; }
+.rel-col ol { padding-left:18px; margin:0; font-size:.8rem; line-height:1.5; }
+.rel-col ul { padding-left:0; list-style:none; margin:0; font-size:.8rem; line-height:1.5; }
+.rel-col li { margin-bottom:5px; }
+
+.options { display:flex; flex-direction:column; gap:8px; }
+.option { display:flex; align-items:flex-start; gap:10px; padding:13px 12px; border:2px solid #e0e0e0; border-radius:10px; cursor:pointer; transition:border-color .13s,background .13s; font-size:.86rem; line-height:1.45; min-height:50px; }
+.option:active:not(.disabled) { border-color:#e91e8c; background:#fce4ec33; }
+.option.selected  { border-color:#e91e8c; background:#fce4ec55; }
+.option.correct   { border-color:#4caf50; background:#e8f5e9; }
+.option.incorrect { border-color:#f44336; background:#ffebee; }
+.option.disabled  { cursor:default; }
+.option-letter { width:26px; height:26px; border-radius:50%; background:#eee; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.75rem; flex-shrink:0; transition:background .13s,color .13s; }
+.option.selected  .option-letter { background:#e91e8c; color:white; }
+.option.correct   .option-letter { background:#4caf50; color:white; }
+.option.incorrect .option-letter { background:#f44336; color:white; }
+.opt-text { flex:1; }
+.opt-icon { flex-shrink:0; font-size:.9rem; }
+
+.explanation { margin-top:12px; padding:11px 12px; background:#fff0f6; border-radius:9px; border-left:4px solid #e91e8c; font-size:.81rem; line-height:1.65; display:none; }
+.explanation.show { display:block; }
+.explanation strong { color:#880e4f; }
+
+.ver-sol-wrap { text-align:center; margin-bottom:10px; }
+.btn-ver-sol { background:white; border:2px solid #e91e8c; color:#880e4f; padding:9px 20px; border-radius:9px; font-weight:700; font-size:.82rem; cursor:pointer; min-height:44px; transition:all .13s; }
+.btn-ver-sol:active { background:#fce4ec; }
+
+.btn { padding:10px 18px; border-radius:10px; border:none; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .15s; min-height:44px; }
+.btn:active { transform:scale(.96); }
+.btn-primary   { background:linear-gradient(135deg,#880e4f,#e91e8c); color:white; }
+.btn-primary:active   { opacity:.88; }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; }
+.btn-secondary { background:#f0f0f0; color:#555; }
+.btn-secondary:active { background:#e0e0e0; }
+.btn-lg { padding:13px 26px; font-size:.92rem; border-radius:12px; }
+.btn-sm { padding:9px 15px; font-size:.8rem; min-height:40px; }
+
+.nav-bar { position:fixed; bottom:0; left:0; right:0; background:white; border-top:1px solid #e0e0e0; padding:8px 14px; padding-bottom:max(8px,env(safe-area-inset-bottom)); display:flex; justify-content:space-between; align-items:center; gap:8px; box-shadow:0 -2px 10px rgba(0,0,0,.07); z-index:200; }
+.nav-info { font-size:.77rem; color:#888; line-height:1.4; }
+.nav-info span { color:#880e4f; font-weight:700; }
+.nav-btns { display:flex; gap:7px; flex-shrink:0; }
+
+.results-screen { background:white; border-radius:14px; padding:24px 16px; box-shadow:0 2px 12px rgba(0,0,0,.08); margin-top:14px; text-align:center; }
+.score-circle { width:108px; height:108px; border-radius:50%; margin:0 auto 16px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:1.85rem; font-weight:900; color:white; }
+.score-good { background:linear-gradient(135deg,#4caf50,#81c784); }
+.score-mid  { background:linear-gradient(135deg,#ff9800,#ffb74d); }
+.score-low  { background:linear-gradient(135deg,#f44336,#e57373); }
+.score-sub  { font-size:.72rem; font-weight:600; opacity:.9; margin-top:2px; }
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:14px 0; }
+.stat-card { border-radius:10px; padding:12px 6px; }
+.stat-card .n { font-size:1.4rem; font-weight:800; }
+.stat-card .l { font-size:.7rem; margin-top:2px; }
+.stat-correct { background:#e8f5e9; color:#2e7d32; }
+.stat-wrong   { background:#ffebee; color:#c62828; }
+.stat-skip    { background:#fff8e1; color:#f57f17; }
+
+.area-row { display:grid; grid-template-columns:1fr 60px 42px; gap:7px; align-items:center; margin-bottom:9px; }
+.area-name { font-size:.78rem; font-weight:600; color:#333; text-align:left; }
+.area-bar-wrap { background:#f0f0f0; border-radius:10px; height:8px; overflow:hidden; }
+.area-bar { height:100%; border-radius:10px; transition:width .6s; }
+.area-pct { font-size:.78rem; font-weight:700; text-align:right; }
+
+.weak-banner { background:linear-gradient(135deg,#fff8e1,#ffecb3); border-left:4px solid #f9a825; padding:12px 14px; border-radius:9px; margin:13px 0; text-align:left; }
+.weak-banner h4 { color:#e65100; margin-bottom:6px; font-size:.87rem; }
+.weak-banner p  { font-size:.77rem; color:#555; margin-bottom:8px; line-height:1.5; }
+.weak-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.weak-tag { background:white; color:#e65100; padding:4px 10px; border-radius:15px; font-size:.72rem; border:1px solid #ffb74d; font-weight:600; }
+
+.version-badge { background:linear-gradient(135deg,#ff9800,#ffa726); color:white; font-weight:800; padding:6px 14px; border-radius:20px; font-size:.72rem; display:inline-block; margin-bottom:10px; letter-spacing:.5px; box-shadow:0 2px 6px rgba(255,152,0,.35); }
+
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">⚖️</div>
+  <div class="header-text">
+    <h1>Subdirección de Procedimientos Adm. Sancionadores</h1>
+    <p>PES · POS · Quejas y Denuncias · 🔀 Aleatorio</p>
+  </div>
+  <div class="header-right">
+    <div class="timer" id="timer">50:00</div>
+    <div class="t-lbl">tiempo restante</div>
+  </div>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+
+<div class="main">
+  <div class="start-screen" id="startScreen">
+    <div class="version-badge">🏷️ SIMULACRO V1</div>
+    <h2>⚖️ Subdirección de Procedimientos Administrativos Sancionadores</h2>
+    <p style="background:#fce4ec;border-radius:10px;padding:10px;color:#880e4f;font-weight:600;margin-bottom:13px;font-size:.81rem">
+      🎯 PES · POS · Quejas y Denuncias
+    </p>
+    <div class="level-banner">
+      <strong>🟡 NIVEL SPEN V1</strong> — Tramitación y sustanciación · Notificaciones · Medidas cautelares · PES y POS · Fase impugnativa.
+    </div>
+    <div class="formats-banner">
+      <strong>📝 FORMATOS INCLUIDOS:</strong><br>
+      🟢 <strong>Directo:</strong> pregunta con 3 opciones sustantivas<br>
+      🔵 <strong>Secuencia:</strong> ordena elementos según un criterio<br>
+      🟣 <strong>Relación:</strong> vincula 2 columnas de conceptos<br>
+      🟠 <strong>Caso práctico:</strong> escenario y decisión institucional
+    </div>
+    <div class="info-grid">
+      <div class="info-card"><div class="num">40</div><div class="lbl">Preguntas</div></div>
+      <div class="info-card"><div class="num">50</div><div class="lbl">Minutos</div></div>
+      <div class="info-card"><div class="num">2</div><div class="lbl">Áreas</div></div>
+    </div>
+    <div class="topic-section">
+      <div class="topic-section-title">📑 1. Generalidades de los PAS (25 preguntas)</div>
+      <div class="topic-grid">
+        <div class="topic-pill"><span>1.1 Tramitación y sustanciación</span><span class="cnt">17</span></div>
+        <div class="topic-pill"><span>1.2 Notificaciones</span><span class="cnt">2</span></div>
+        <div class="topic-pill"><span>1.3 Medidas cautelares</span><span class="cnt">4</span></div>
+        <div class="topic-pill"><span>1.4 Sustanciación y resolución</span><span class="cnt">1</span></div>
+        <div class="topic-pill"><span>1.5 Fase impugnativa</span><span class="cnt">1</span></div>
+      </div>
+      <div class="topic-section-title">⚖️ 2. Particularidades de los PAS (15 preguntas)</div>
+      <div class="topic-grid">
+        <div class="topic-pill"><span>2.1 Procedencia del PES</span><span class="cnt">5</span></div>
+        <div class="topic-pill"><span>2.2 Sustanciación del PES</span><span class="cnt">3</span></div>
+        <div class="topic-pill"><span>2.3 Sustanciación del POS</span><span class="cnt">4</span></div>
+        <div class="topic-pill"><span>2.4 Resolución del POS</span><span class="cnt">3</span></div>
+      </div>
+    </div>
+    <div style="background:#f5f5f5;border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:.7rem;color:#555;text-align:left;line-height:1.6">
+      <strong style="color:#880e4f">📚 BIBLIOGRAFÍA OFICIAL (guía INE)</strong><br>
+      • LGIPE — Ley General de Instituciones y Procedimientos Electorales (Libro Octavo)<br>
+      • LGSMIME — Ley General del Sistema de Medios de Impugnación en Materia Electoral<br>
+      • Reglamento de Quejas y Denuncias del INE<br>
+      • Reglamento Interior del INE<br>
+      • Estatuto del Servicio Profesional Electoral Nacional<br>
+      • Jurisprudencia y tesis relevantes del TEPJF (Sala Superior y Salas Regionales)<br>
+      • Acuerdos del Consejo General y de la Comisión de Quejas y Denuncias
+    </div>
+    <button class="btn btn-primary btn-lg" style="width:100%" onclick="startExam()">Comenzar simulacro →</button>
+  </div>
+
+  <div id="examScreen" class="hidden"></div>
+  <div id="resultsScreen" class="hidden"></div>
+</div>
+
+<div class="nav-bar hidden" id="navBar">
+  <div class="nav-info">
+    Preg. <span id="navCurrent">1</span> de <span id="navTotal">40</span>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary btn-sm" id="btnPrev" onclick="prevQ()">← Ant.</button>
+    <button class="btn btn-primary  btn-sm" id="btnNext" onclick="nextQ()">Sig. →</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   BANCO DE PREGUNTAS — SUBDIRECCIÓN DE PROCEDIMIENTOS
+   ADMINISTRATIVOS SANCIONADORES
+   Distribución oficial (Guía INE, 40 preguntas):
+     1.1 Tramitación y sustanciación                         17
+     1.2 Notificaciones                                       2
+     1.3 Medidas cautelares                                   4
+     1.4 Sustanciación y resolución                           1
+     1.5 Fase impugnativa                                     1
+     2.1 Procedencia del Procedimiento Especial Sancionador   5
+     2.2 Sustanciación del PES                                3
+     2.3 Sustanciación del POS                                4
+     2.4 Resolución del POS                                   3
+                                                 TOTAL:     40
+═══════════════════════════════════════════════════════════════ */
+const Q = [
+
+  /* ══════════════════════════════════
+     1.1  TRAMITACIÓN Y SUSTANCIACIÓN  (17)
+  ══════════════════════════════════ */
+
+  // Q1 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"Conforme al Reglamento de Quejas y Denuncias del INE, ¿cuáles son los requisitos mínimos que debe contener un escrito de queja o denuncia para su admisión?",
+    o:["Únicamente la firma del denunciante y el monto del daño",
+       "(I) Nombre del denunciante y firma autógrafa o electrónica; (II) domicilio para oír y recibir notificaciones; (III) los documentos que sean necesarios para acreditar la personería; (IV) narración expresa y clara de los hechos; (V) ofrecimiento y exhibición de las pruebas con que se cuente, o las que habrán de requerirse, justificando la imposibilidad práctica de su aportación; y (VI) las relaciones de las pruebas con cada uno de los hechos. Tratándose de denuncias contra servidores públicos, se debe acompañar el cargo y la dependencia de adscripción",
+       "Sólo el nombre del denunciado y un periódico que mencione el hecho"],
+    c:1,
+    ex:"El art. 8 del Reglamento de Quejas y Denuncias del INE enlista los requisitos formales: identificación con firma, domicilio, personería en su caso, narración clara de hechos, ofrecimiento de pruebas y relación de pruebas con hechos. La omisión de cualquiera de ellos genera prevención al denunciante para subsanar en plazo breve, bajo apercibimiento de tener por no presentada la queja. La admisión sólo procede si el escrito cumple integralmente los requisitos. Esta etapa es responsabilidad de la Subdirección y exige rigor formal." },
+
+  // Q2 - secuencia
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"seq",
+    listadoTitle:"Etapas generales del procedimiento administrativo sancionador (desordenadas):",
+    listado:[
+      "Investigación preliminar y diligencias para mejor proveer (entrevistas, requerimientos de información, inspecciones oculares)",
+      "Recepción del escrito de queja o denuncia, o vista oficiosa",
+      "Emplazamiento y garantía de audiencia al denunciado, con corrida de traslado del expediente",
+      "Resolución del Consejo General o, en su caso, de la Sala Regional Especializada del TEPJF",
+      "Análisis de admisibilidad y, en su caso, prevención al denunciante para subsanar requisitos",
+      "Elaboración del proyecto de resolución por la UTCE u órgano competente"],
+    q:"¿Cuál es el orden cronológico correcto?",
+    o:["2, 5, 1, 3, 6, 4",
+       "1, 2, 3, 4, 5, 6",
+       "2, 1, 5, 3, 4, 6"],
+    c:0,
+    ex:"Orden correcto: (2) Recepción de la queja → (5) Análisis de admisibilidad/prevención → (1) Investigación preliminar → (3) Emplazamiento y audiencia → (6) Proyecto de resolución → (4) Resolución del órgano competente. La lógica es: primero entra la queja, se revisa formalmente, se investiga si procede, se garantiza audiencia al denunciado, se prepara el proyecto y finalmente decide el órgano colegiado. Confundir el orden (por ejemplo, emplazar antes de investigar) vulnera el debido proceso." },
+
+  // Q3 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Qué órgano del INE es el competente para sustanciar e instruir los procedimientos administrativos sancionadores ordinarios y especiales en materia electoral?",
+    o:["El Consejo General directamente, sin intermediarios técnicos",
+       "La Unidad Técnica de lo Contencioso Electoral (UTCE), adscrita a la Secretaría Ejecutiva del INE, conforme a los artículos 470 y 471 de la LGIPE y al Reglamento Interior del Instituto. Esta Unidad recibe quejas, instruye, sustancia, propone medidas cautelares ante la Comisión de Quejas y Denuncias, y elabora los proyectos de resolución para los órganos competentes",
+       "La Junta Local Ejecutiva exclusivamente"],
+    c:1,
+    ex:"La UTCE es el órgano técnico responsable de sustanciar los PAS en sus dos modalidades: ordinario (POS) y especial (PES). Su adscripción es a la Secretaría Ejecutiva. Sus funciones incluyen: recepción y análisis de quejas, instrucción del procedimiento, sustanciación, propuesta de medidas cautelares ante la Comisión de Quejas y Denuncias, y elaboración de proyectos de resolución. En el PES, los proyectos se remiten a la Sala Regional Especializada del TEPJF para resolver; en el POS, al Consejo General. La Subdirección que sustancia es pieza central de esa cadena." },
+
+  // Q4 - relación
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"rel",
+    relTitle:"Relacione cada órgano con su función en los procedimientos sancionadores",
+    colA:{ title:"Órgano", items:[
+      "Unidad Técnica de lo Contencioso Electoral (UTCE)",
+      "Comisión de Quejas y Denuncias del INE",
+      "Consejo General del INE",
+      "Sala Regional Especializada del TEPJF"] },
+    colB:{ title:"Función principal", items:[
+      "a) Sustanciar e instruir los procedimientos sancionadores; recibir quejas; elaborar proyectos de resolución",
+      "b) Conocer y resolver sobre las medidas cautelares solicitadas durante la sustanciación; emitir acuerdos sobre solicitudes urgentes",
+      "c) Resolver los procedimientos ordinarios sancionadores e imponer las sanciones que correspondan",
+      "d) Resolver los procedimientos especiales sancionadores remitidos por el INE, en los términos del artículo 476 de la LGIPE",
+      "e) Aprobar el presupuesto anual del Tribunal Electoral del Poder Judicial de la Federación"] },
+    q:"Seleccione la opción con las relaciones correctas:",
+    o:["1a, 2b, 3c, 4d",
+       "1c, 2d, 3a, 4b",
+       "1e, 2a, 3b, 4c"],
+    c:0,
+    ex:"(1) UTCE → instrucción y sustanciación, elaboración de proyectos (a). (2) Comisión de Quejas y Denuncias → resolver sobre medidas cautelares (b). (3) Consejo General → resolver POS y aplicar sanciones (c). (4) Sala Regional Especializada → resolver PES remitidos por el INE (d). La opción 'e' es distractor: el presupuesto del TEPJF lo determina su propio Pleno y la Cámara de Diputados, no el Consejo General del INE. Esta arquitectura competencial es esencial para entender el flujo del PAS." },
+
+  // Q5 - caso práctico
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"cas",
+    p:"La UTCE recibe un escrito de queja firmado únicamente con las iniciales del denunciante, sin domicilio para oír y recibir notificaciones, y con una narración genérica de hechos sin ofrecimiento de pruebas. El denunciante refiere haber tenido conocimiento de los hechos por \"comentarios en redes sociales\".",
+    pt:"Caso práctico · Análisis de admisibilidad",
+    q:"¿Cuál es la actuación procesalmente correcta de la Subdirección?",
+    o:["Admitir de plano el escrito y abrir investigación inmediata por la gravedad implícita",
+       "Desechar de inmediato sin posibilidad de subsanación, por la deficiencia formal del escrito",
+       "Formular prevención al denunciante para que en un plazo de 3 días hábiles subsane las omisiones (firma autógrafa, domicilio, narración clara y ofrecimiento de pruebas), apercibido de que en caso de no hacerlo, se tendrá por no presentada la queja conforme al Reglamento de Quejas y Denuncias. La prevención garantiza el acceso a la justicia y el debido proceso, sin admitir un escrito incompleto ni desechar arbitrariamente"],
+    c:2,
+    ex:"El Reglamento de Quejas y Denuncias prevé la prevención como mecanismo intermedio entre la admisión y el desechamiento. Cuando el escrito es subsanable (omisiones de forma, no de fondo), procede prevenir, otorgando un plazo breve (típicamente 3 días hábiles) para corregir, con apercibimiento. Si el denunciante subsana, se admite; si no, se tiene por no presentada. Desechar sin prevenir vulnera el derecho de acceso a la justicia (art. 17 constitucional). Admitir sin requisitos vulnera el debido proceso del denunciado." },
+
+  // Q6 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Cuáles son las dos modalidades del procedimiento administrativo sancionador en materia electoral previstas en la LGIPE?",
+    o:["Procedimiento Civil y Procedimiento Penal Electoral",
+       "(I) Procedimiento Ordinario Sancionador (POS), regulado por los artículos 464 a 469 de la LGIPE, aplicable a infracciones cometidas fuera de proceso electoral o cuando los hechos no requieran de tramitación expedita; y (II) Procedimiento Especial Sancionador (PES), regulado por los artículos 470 a 477 de la LGIPE, aplicable durante los procesos electorales para conductas que vulneren las reglas de propaganda política o electoral, contraten o adquieran tiempos en radio y televisión, o constituyan actos anticipados de precampaña o campaña",
+       "Procedimiento Constitucional y Procedimiento Convencional"],
+    c:1,
+    ex:"La LGIPE distingue dos vías: el POS (ordinario) y el PES (especial). El criterio diferenciador es doble: (a) temporal — el PES opera sobre todo durante el proceso electoral, mientras el POS opera en cualquier tiempo; y (b) material — el PES tipifica conductas específicas (propaganda, radio y TV, actos anticipados), mientras el POS abarca infracciones residuales. Cada uno tiene plazos, autoridades resolutoras y reglas distintas. La Subdirección debe identificar correctamente la vía desde la admisión, pues una clasificación errónea puede causar la nulidad del procedimiento." },
+
+  // Q7 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"En la sustanciación de un procedimiento administrativo sancionador, ¿qué principios constitucionales y convencionales debe respetar la autoridad instructora?",
+    o:["Únicamente celeridad y economía procesal",
+       "Legalidad, tipicidad, presunción de inocencia, debido proceso, garantía de audiencia, defensa adecuada, non bis in idem, proporcionalidad, in dubio pro reo, motivación y fundamentación, así como los principios del derecho administrativo sancionador (que adopta, con matices, los principios del derecho penal por la naturaleza punitiva del ius puniendi estatal). Estos principios derivan de los artículos 14, 16 y 22 constitucionales y de los artículos 8 y 9 de la Convención Americana sobre Derechos Humanos",
+       "Sólo la oralidad, sin requisitos sustantivos"],
+    c:1,
+    ex:"La SCJN y el TEPJF han reiterado que el derecho administrativo sancionador es una manifestación del ius puniendi del Estado y, por tanto, le son aplicables — con matices — los principios del derecho penal: legalidad (sólo se sanciona conducta tipificada), tipicidad (descripción clara), presunción de inocencia, audiencia, defensa, non bis in idem, proporcionalidad, in dubio pro reo, motivación/fundamentación. Estos principios están en los arts. 14, 16 y 22 constitucionales y en la Convención Americana. Una resolución que vulnere alguno es revocable por el TEPJF." },
+
+  // Q8 - caso práctico
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"cas",
+    p:"Durante la investigación preliminar de una queja, la UTCE solicita información a una autoridad municipal mediante oficio. La autoridad municipal no responde en el plazo otorgado y, al ser requerida nuevamente, contesta de manera evasiva. La Subdirección debe decidir cómo proceder ante esta falta de colaboración.",
+    pt:"Caso práctico · Diligencias para mejor proveer",
+    q:"¿Cuál es la decisión jurídicamente correcta?",
+    o:["Cerrar la investigación por imposibilidad de allegarse de la información",
+       "Apercibir formalmente a la autoridad municipal para que cumpla con el deber de colaboración previsto en los artículos 36 y 37 de la LGIPE; ante un nuevo incumplimiento, dar vista al órgano de control interno o al superior jerárquico para los efectos de responsabilidad administrativa correspondiente; y, cuando proceda, hacerse valer de medidas de apremio. La autoridad investigadora puede también allegarse de la información por otras vías (otras autoridades, fuentes públicas, inspección directa)",
+       "Imponer multa directa al servidor público omiso sin más trámite"],
+    c:1,
+    ex:"El deber de colaboración entre autoridades es un principio constitucional y legal. La autoridad investigadora puede requerir información a cualquier autoridad federal, estatal o municipal; el incumplimiento genera responsabilidad administrativa de los servidores públicos involucrados. La UTCE no impone sanciones directas a otros servidores públicos (no es su competencia), pero sí da vista a los órganos competentes (contralorías, OIC, superiores jerárquicos). Asimismo, la investigación no debe paralizarse por una negativa: la autoridad debe agotar otras vías." },
+
+  // Q9 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Qué tipos de pruebas son admisibles en el procedimiento administrativo sancionador electoral?",
+    o:["Únicamente la prueba documental pública",
+       "(I) Documentales públicas (las expedidas por autoridades en ejercicio de sus funciones); (II) documentales privadas (todas las demás); (III) técnicas (fotografías, videos, grabaciones, capturas de pantalla, medios electrónicos en general); (IV) periciales, sólo en procedimientos no vinculados a procesos electorales; (V) reconocimiento o inspección judicial; (VI) presuncionales legales y humanas; y (VII) la instrumental de actuaciones. La confesional y la testimonial no son admisibles como tales en el PES por su naturaleza expedita, pero se admiten declaraciones por escrito ratificadas",
+       "Sólo las pruebas que el denunciante exhiba en original"],
+    c:1,
+    ex:"El catálogo probatorio está en los arts. 461 y 462 de la LGIPE y en el Reglamento de Quejas y Denuncias. Las documentales públicas tienen valor probatorio pleno; las privadas y técnicas requieren adminiculación. Las periciales sólo en POS no electorales. La confesional y testimonial son limitadas o inadmisibles en PES por su naturaleza expedita; sí caben declaraciones por escrito ratificadas. El sistema probatorio combina rigor formal (validez) con flexibilidad valorativa (sana crítica). Esta diferencia entre POS y PES es clave en la práctica." },
+
+  // Q10 - relación
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"rel",
+    relTitle:"Relacione cada tipo de prueba con su régimen de valoración",
+    colA:{ title:"Tipo de prueba", items:[
+      "Documental pública",
+      "Documental privada",
+      "Técnica (foto, video, captura)",
+      "Presuncional"] },
+    colB:{ title:"Régimen de valoración", items:[
+      "a) Valor probatorio pleno salvo prueba en contrario, por haber sido expedida por autoridad en ejercicio de sus funciones",
+      "b) Valor indiciario que requiere adminiculación con otros elementos probatorios; se valora conforme a las reglas de la lógica, la sana crítica y la experiencia",
+      "c) Sólo genera indicios y debe concatenarse con otros medios; debe acreditarse la circunstancia de modo, tiempo, lugar y autoría",
+      "d) Inferencia que la autoridad realiza a partir de hechos probados (legales) o conforme a las reglas de la experiencia (humanas)",
+      "e) Valor probatorio absoluto sin posibilidad alguna de cuestionamiento"] },
+    q:"Seleccione la opción con las relaciones correctas:",
+    o:["1a, 2b, 3c, 4d",
+       "1e, 2a, 3b, 4c",
+       "1c, 2d, 3a, 4b"],
+    c:0,
+    ex:"(1) Documental pública → valor pleno salvo prueba en contrario (a). (2) Documental privada → valor indiciario, requiere adminiculación (b). (3) Técnica → indicios, exige acreditar modo, tiempo, lugar, autoría (c). (4) Presuncional → inferencia legal o humana (d). La opción 'e' es distractor: ningún medio tiene valor absoluto e incuestionable. La valoración integral de pruebas (sana crítica) es eje del PAS. La Sala Superior ha reiterado en jurisprudencia que las técnicas, por su facilidad de manipulación, son indicios que necesitan corroboración (Jurisprudencia 4/2014)." },
+
+  // Q11 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Qué facultad tiene la autoridad instructora respecto al ofrecimiento de pruebas que pretendan acreditar hechos a través de internet o redes sociales?",
+    o:["Debe rechazarlas siempre por su naturaleza inestable",
+       "La autoridad puede ordenar la certificación del contenido de páginas web, redes sociales o medios electrónicos a través del personal del INE habilitado o por fedatario público, a fin de incorporar la información al expediente con la fecha cierta. Las capturas de pantalla son técnicas; deben adminicularse, y cuando la prueba se base sólo en publicaciones del propio denunciado vinculadas a un proceso electoral, puede actualizarse causal de improcedencia",
+       "Sólo si el denunciante presenta el original impreso firmado por el dueño de la red social"],
+    c:1,
+    ex:"Las pruebas digitales son cada vez más frecuentes. La autoridad cuenta con herramientas para garantizar fecha cierta: certificación por personal habilitado del INE (oficialía electoral) o por fedatario público. Las capturas de pantalla son pruebas técnicas; tienen valor indiciario y deben adminicularse. Existe un criterio jurisprudencial sobre la causal de improcedencia cuando la prueba consista únicamente en publicaciones del propio denunciado en sus redes vinculadas al proceso electoral, derivado de criterios del TEPJF. La Subdirección debe usar correctamente estas herramientas." },
+
+  // Q12 - caso práctico
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"cas",
+    p:"En la sustanciación de un PAS, el denunciado solicita la prueba pericial para determinar la autenticidad de un audio supuestamente atribuido a él. El procedimiento es un PES en pleno proceso electoral, con plazos sumarísimos.",
+    pt:"Caso práctico · Pruebas en PES",
+    q:"¿Cuál es la determinación adecuada conforme a la normativa y criterios jurisprudenciales?",
+    o:["Admitir la prueba pericial sin restricciones, dado que es derecho del denunciado",
+       "Desechar la pericial por improcedente en el PES (art. 470 y siguientes LGIPE), dado que su naturaleza expedita es incompatible con la dilación que implica el desahogo pericial. La autoridad puede, en su lugar, allegarse oficiosamente de la certificación del audio o de su análisis técnico por el área respectiva del Instituto, garantizando el derecho de defensa por otras vías (alegatos, impugnación de la prueba, contradocumentales)",
+       "Suspender el PES indefinidamente hasta que se desahogue la pericial"],
+    c:1,
+    ex:"La LGIPE excluye la pericial del PES por su incompatibilidad con la celeridad del procedimiento (resolución en pocos días). El criterio de la Sala Superior ha sido constante: en PES no se admite pericial; en POS sí cuando no esté vinculado a proceso electoral. La autoridad instructora puede suplir parcialmente con análisis técnicos institucionales, certificaciones de oficialía electoral, etc. El derecho de defensa se garantiza por otras vías. Suspender el PES indefinidamente vulnera la finalidad del procedimiento (resolver antes de la jornada o calificación)." },
+
+  // Q13 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Qué se entiende por garantía de audiencia en el procedimiento administrativo sancionador electoral?",
+    o:["El derecho del denunciante a ser oído por el Consejero Presidente",
+       "El derecho fundamental del denunciado, derivado del art. 14 constitucional, a ser informado oportunamente de los hechos imputados, los preceptos presuntamente violados y los elementos probatorios; a tener acceso al expediente; a presentar contestación, ofrecer pruebas, alegar y, en general, ejercer la defensa con todas las herramientas procesales antes de que se emita una resolución que pueda afectar sus derechos. Su violación causa la nulidad de la resolución",
+       "Únicamente la posibilidad de leer el proyecto de resolución antes de la votación"],
+    c:1,
+    ex:"La garantía de audiencia es derecho fundamental: nadie puede ser privado de derechos sin previo juicio en el que se le otorguen las formalidades esenciales del procedimiento. En PAS implica: emplazamiento con copia íntegra del expediente, conocimiento de hechos y preceptos imputados, plazo razonable para defenderse, derecho a ofrecer pruebas y formular alegatos. Las formalidades esenciales fueron precisadas por la SCJN: notificación, oportunidad probatoria, oportunidad de alegar, dictado de resolución. Su violación es causa de nulidad por el TEPJF." },
+
+  // Q14 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"En relación con la prescripción de la facultad sancionadora del INE en materia electoral, ¿cuál es la regla general?",
+    o:["No existe prescripción; las facultades sancionadoras son imprescriptibles",
+       "La facultad sancionadora del INE prescribe en el plazo de tres años contados a partir del día siguiente al que se hubiese cometido la infracción o iniciado, en su caso, una serie de hechos constitutivos de la misma, en términos del artículo 464, párrafo 2, de la LGIPE. La prescripción debe ser declarada por la autoridad cuando la advierta y, una vez transcurrida, impide la imposición de sanciones; debe analizarse de oficio en cada caso",
+       "El plazo es de seis meses naturales sin excepción"],
+    c:1,
+    ex:"El art. 464.2 de la LGIPE establece la prescripción de la facultad sancionadora en 3 años, contados desde el día siguiente a la comisión de la infracción (o desde que cesó la conducta continuada). La autoridad debe declararla de oficio. Es figura de seguridad jurídica: el Estado no puede sancionar indefinidamente. Hay matices: en infracciones continuadas, el plazo corre desde el último acto; en infracciones permanentes, desde que cesa el estado antijurídico. La Subdirección debe verificar cuidadosamente el cómputo en cada expediente." },
+
+  // Q15 - secuencia
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"seq",
+    listadoTitle:"Secuencia procesal del POS (Procedimiento Ordinario Sancionador), desordenada:",
+    listado:[
+      "Emisión de la resolución por el Consejo General",
+      "Recepción y registro de la queja en la UTCE",
+      "Emplazamiento al denunciado, corrida de traslado y plazo para contestar (5 días)",
+      "Investigación preliminar y admisión de la queja",
+      "Desahogo de pruebas y alegatos",
+      "Elaboración del proyecto de resolución y remisión a Consejo General"],
+    q:"¿Cuál es la secuencia procesal correcta?",
+    o:["2, 4, 3, 5, 6, 1",
+       "4, 2, 3, 5, 1, 6",
+       "2, 3, 4, 5, 6, 1"],
+    c:0,
+    ex:"Orden correcto del POS: (2) Recepción/registro → (4) Investigación preliminar y admisión → (3) Emplazamiento con plazo de 5 días → (5) Desahogo de pruebas y alegatos → (6) Proyecto de resolución → (1) Resolución del Consejo General. El POS tiene plazos más amplios que el PES, lo que permite mayor profundidad probatoria (incluida pericial cuando no está vinculado a proceso electoral). La estructura 'investigar primero, emplazar después' protege al denunciado: sólo se le emplaza cuando la autoridad ya cuenta con elementos sólidos." },
+
+  // Q16 - caso práctico
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"cas",
+    p:"La UTCE recibe una denuncia anónima detallada que contiene información precisa sobre presuntos actos anticipados de campaña, con referencias a fechas, lugares específicos y videos públicamente disponibles. El servidor de turno duda si admitir la denuncia anónima o desecharla por falta de identificación del denunciante.",
+    pt:"Caso práctico · Denuncia anónima",
+    q:"¿Cuál es el tratamiento procesalmente correcto?",
+    o:["Desechar de plano por falta de identificación del denunciante",
+       "Si bien las denuncias anónimas no cumplen con el requisito formal de identificación del denunciante, su contenido puede ser tomado como noticia de hechos para que la autoridad inicie investigación de oficio cuando los hechos son verificables, específicos y de relevancia constitucional o legal en materia electoral. La autoridad puede iniciar procedimiento oficioso si los hechos son ciertos, sin que la denuncia anónima por sí misma sea admitida como queja formal",
+       "Admitir la denuncia anónima como si fuera escrito de queja con todos los efectos"],
+    c:1,
+    ex:"Las denuncias anónimas no se admiten como tal por incumplir requisitos formales de identificación. Sin embargo, su contenido puede operar como noticia de hechos: la autoridad investigadora, con base en sus facultades oficiosas, puede iniciar de oficio la investigación si los hechos son verificables, específicos y relevantes. Esta vía protege el orden público electoral sin desvirtuar el sistema formal de quejas. El criterio del TEPJF apoya esta lectura: lo importante es la verificabilidad y relevancia, no el origen anónimo de la información." },
+
+  // Q17 - directo
+  { sa:"1.1", sal:"Tramitación y sustanciación", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Cuál es la diferencia entre un procedimiento sancionador iniciado por queja y uno iniciado de oficio?",
+    o:["Sólo difieren en el formato del escrito inicial",
+       "El procedimiento por queja inicia con escrito de un denunciante (persona física, moral o partido) que cumple los requisitos formales del Reglamento. El procedimiento de oficio inicia por acuerdo motivado de la autoridad cuando, en ejercicio de sus facultades, advierte hechos posiblemente constitutivos de infracción (revisión de informes, monitoreos, vistas de otras autoridades, conocimiento por medios). En ambos se respeta el debido proceso, pero el oficioso no requiere denunciante; la autoridad asume las cargas de investigación y prueba",
+       "El de oficio no requiere garantía de audiencia ni notificación al denunciado"],
+    c:1,
+    ex:"La distinción es procesal: queja parte de denuncia formal externa; oficio parte de la propia autoridad. En ambos se garantizan plenamente los derechos del denunciado. En el oficioso, la autoridad asume el rol acusatorio y debe acreditar los hechos con sus propios medios; no hay un denunciante con interés. El monitoreo electoral, la revisión de informes y los acuerdos de otras autoridades son vías típicas de inicio oficioso. La Subdirección elabora acuerdos de inicio oficioso cuando los elementos son sólidos." },
+
+
+  /* ══════════════════════════════════
+     1.2  NOTIFICACIONES  (2)
+  ══════════════════════════════════ */
+
+  // Q18 - directo
+  { sa:"1.2", sal:"Notificaciones", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Cuáles son las modalidades de notificación previstas en el procedimiento administrativo sancionador electoral y cuál es su orden de preferencia?",
+    o:["Únicamente por estrados físicos y por correo certificado",
+       "Las modalidades son: (i) personal — para emplazamientos y resoluciones definitivas; (ii) por oficio — entre autoridades; (iii) por estrados — para acuerdos y notificaciones cuando no se localiza al destinatario o cuando la ley lo determina; (iv) electrónica — por medios institucionales y correos registrados; (v) automática — cuando el representante está presente en sesión; y (vi) por comparecencia — cuando el interesado acude. La personal es preferente para actos que afectan derechos sustantivos; la electrónica gana espacio por modernización institucional",
+       "Sólo por publicación en el Diario Oficial de la Federación"],
+    c:1,
+    ex:"El Reglamento de Quejas y Denuncias y la LGIPE prevén un catálogo de modalidades. La regla es funcional: actos que afectan derechos sustantivos (emplazamiento, resolución) requieren personal; actos de mero trámite admiten estrados o electrónica. La notificación electrónica gana terreno por la modernización del Instituto. Una notificación viciada es causa frecuente de revocación por el TEPJF: defectos como ausencia de cédula, ausencia de búsqueda previa, incumplimiento de horarios o falta de testigos pueden anular la actuación." },
+
+  // Q19 - caso práctico
+  { sa:"1.2", sal:"Notificaciones", area:"Generalidades de los PAS", t:"cas",
+    p:"El notificador del INE acude a domicilio del denunciado para emplazamiento personal. No encuentra al destinatario y deja citatorio para hora cierta del día siguiente. Al día siguiente, tampoco está. El notificador deja la cédula con un vecino, sin asentar en el acta los datos del vecino ni acreditar que el domicilio es efectivamente el del denunciado.",
+    pt:"Caso práctico · Vicios en la notificación",
+    q:"¿Cuál es la consecuencia procesal y cómo debe proceder la Subdirección al revisar el expediente?",
+    o:["La notificación es válida; basta haber dejado cédula en el domicilio",
+       "La notificación está viciada por dos motivos: (a) no se cumplieron las formalidades de la notificación personal subsidiaria (búsqueda, citatorio, asentamiento de datos del receptor, descripción del inmueble, acreditación de que es domicilio del denunciado); y (b) entregar cédula a un tercero sin estos asentamientos vulnera el debido proceso. La Subdirección debe ordenar reposición de la notificación, pues sostenerla causaría nulidad de la resolución por vicio de origen ante el TEPJF",
+       "La notificación es válida porque el plazo para subsanar ya transcurrió"],
+    c:1,
+    ex:"Las notificaciones personales son objeto de jurisprudencia abundante: el TEPJF anula sistemáticamente notificaciones con vicios formales. Las formalidades clave son: (i) buscar al destinatario; (ii) si no está, citatorio para hora cierta; (iii) en segunda visita, dejar cédula con persona idónea; (iv) asentar datos completos: nombre, parentesco, identificación del receptor; (v) descripción del inmueble; (vi) acreditar que es el domicilio. La Subdirección, al supervisar, debe ordenar reposición ante vicios. El costo de no hacerlo es la nulidad posterior de toda la resolución." },
+
+
+  /* ══════════════════════════════════
+     1.3  MEDIDAS CAUTELARES  (4)
+  ══════════════════════════════════ */
+
+  // Q20 - directo
+  { sa:"1.3", sal:"Medidas cautelares", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Qué órgano del INE es competente para emitir medidas cautelares en el procedimiento administrativo sancionador electoral?",
+    o:["El Consejo General en sesión ordinaria, como facultad exclusiva",
+       "La Comisión de Quejas y Denuncias del INE, conforme al artículo 471, párrafo 8, de la LGIPE; conoce de las solicitudes de medidas cautelares que la UTCE le presenta y emite acuerdo fundado y motivado sobre su procedencia o improcedencia. Su determinación es impugnable directamente ante la Sala Superior del TEPJF (recurso de revisión del procedimiento especial sancionador o per saltum, según corresponda)",
+       "El Tribunal Electoral del Poder Judicial de la Federación en todos los casos"],
+    c:1,
+    ex:"La Comisión de Quejas y Denuncias es órgano colegiado del Consejo General que decide sobre medidas cautelares. La UTCE prepara la propuesta; la Comisión analiza y resuelve. Sus acuerdos son impugnables directamente ante la Sala Superior. Esta arquitectura responde a la naturaleza preventiva y urgente de las cautelares: requieren decisión rápida pero colegiada. La medida cautelar no prejuzga el fondo (presunción de inocencia) y debe ser proporcional, idónea y necesaria para evitar el daño irreparable." },
+
+  // Q21 - directo
+  { sa:"1.3", sal:"Medidas cautelares", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Cuáles son los elementos que la Comisión de Quejas y Denuncias debe analizar para determinar la procedencia de una medida cautelar?",
+    o:["Únicamente la cuantía económica del daño alegado",
+       "(i) La apariencia del buen derecho (fumus boni iuris) — verosimilitud del derecho invocado a partir de elementos probatorios preliminares; (ii) el peligro en la demora (periculum in mora) — riesgo de daño irreparable o de difícil reparación si la medida no se concede oportunamente; (iii) la proporcionalidad — adecuación entre la medida y el fin perseguido, con afectación mínima a los derechos del destinatario; (iv) la apariencia de no irreparabilidad — la medida no debe equivaler a un prejuzgamiento del fondo; y (v) la idoneidad y necesidad",
+       "Sólo la conformidad expresa del partido denunciado"],
+    c:1,
+    ex:"La medida cautelar es figura clásica del derecho procesal: requiere fumus boni iuris (apariencia del buen derecho), periculum in mora (peligro en la demora), proporcionalidad e idoneidad. En materia electoral, además, no debe prejuzgar el fondo (presunción de inocencia). La autoridad debe motivar cada uno de estos elementos en el acuerdo. El TEPJF exige rigor en el análisis: medidas cautelares concedidas sin estos elementos son revocadas. El bien jurídico tutelado es la equidad, la legalidad y el interés público electoral." },
+
+  // Q22 - relación
+  { sa:"1.3", sal:"Medidas cautelares", area:"Generalidades de los PAS", t:"rel",
+    relTitle:"Relacione cada elemento de la medida cautelar con su descripción",
+    colA:{ title:"Elemento", items:[
+      "Fumus boni iuris",
+      "Periculum in mora",
+      "Proporcionalidad",
+      "No prejuzgamiento del fondo"] },
+    colB:{ title:"Descripción", items:[
+      "a) Apariencia del buen derecho: la conducta denunciada presenta verosimilitud preliminar de configurar infracción, conforme a un examen sumario y no exhaustivo",
+      "b) Riesgo de que la demora ocasione daño irreparable o de difícil reparación al bien jurídico tutelado, especialmente por la inminencia de la jornada electoral o por la difusión del acto",
+      "c) Adecuación entre la medida y su fin, con la menor afectación posible a los derechos del destinatario; la medida debe ser idónea, necesaria y estrictamente proporcional",
+      "d) La medida cautelar es preventiva y no constituye anticipación del juicio de fondo; su concesión no implica reconocer la culpabilidad ni la nulidad del acto denunciado",
+      "e) Inversión automática de la carga de la prueba en favor del denunciante"] },
+    q:"Seleccione la opción con las relaciones correctas:",
+    o:["1a, 2b, 3c, 4d",
+       "1e, 2a, 3b, 4c",
+       "1c, 2d, 3a, 4b"],
+    c:0,
+    ex:"(1) Fumus boni iuris → apariencia del buen derecho (a). (2) Periculum in mora → peligro en la demora, daño irreparable (b). (3) Proporcionalidad → adecuación e idoneidad (c). (4) No prejuzgamiento → carácter preventivo, no constituye fallo de fondo (d). La opción 'e' es distractor: la presunción de inocencia se mantiene durante el procedimiento; la medida cautelar no invierte cargas probatorias. Estos cuatro elementos son la columna vertebral del análisis cautelar y deben aparecer fundados en cada acuerdo de la Comisión." },
+
+  // Q23 - caso práctico
+  { sa:"1.3", sal:"Medidas cautelares", area:"Generalidades de los PAS", t:"cas",
+    p:"En plena campaña, la UTCE recibe denuncia contra un candidato por difundir un spot televisivo que contiene calumnia contra otro candidato. El denunciante solicita medida cautelar urgente para retirar el spot. La elección se celebrará en 8 días.",
+    pt:"Caso práctico · Procedencia de medida cautelar",
+    q:"¿Cuál es la propuesta técnicamente correcta de la Subdirección a la Comisión?",
+    o:["Negar la medida porque el spot ya fue contratado y pagado",
+       "Proponer la procedencia de la medida cautelar consistente en el retiro inmediato del spot, una vez analizados los cuatro elementos: (a) apariencia del buen derecho — el contenido tiene visos de calumnia, conforme a la jurisprudencia (afirmaciones falsas que dañan reputación); (b) peligro en la demora — la jornada está próxima y el daño se consuma con cada transmisión; (c) proporcionalidad — el retiro es la medida menos gravosa que evita el daño; (d) no prejuzgamiento — la medida es cautelar y no resuelve el fondo. Acuerdo a someter a la Comisión",
+       "Esperar a la resolución del Tribunal sin actuar"],
+    c:1,
+    ex:"Caso típico de cautelar en materia de propaganda: el riesgo de daño electoral por la inminencia de la jornada hace urgente la actuación. El análisis de los cuatro elementos debe ser explícito y fundamentado. La calumnia electoral es figura tipificada: imputación de hechos o delitos falsos con impacto en candidato/proceso (criterios consolidados del TEPJF). La medida típica en estos casos es el retiro del spot, no la sanción al candidato (eso es para el fondo). La Subdirección redacta proyecto de acuerdo riguroso para la Comisión." },
+
+
+  /* ══════════════════════════════════
+     1.4  SUSTANCIACIÓN Y RESOLUCIÓN  (1)
+  ══════════════════════════════════ */
+
+  // Q24 - directo
+  { sa:"1.4", sal:"Sustanciación y resolución", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Qué tipos de resolución pueden emitirse al concluir un procedimiento administrativo sancionador electoral?",
+    o:["Sólo fundada o infundada, sin más alternativas",
+       "Las resoluciones pueden ser: (a) fundada, cuando se acreditan los hechos y la infracción, con imposición de la sanción correspondiente; (b) parcialmente fundada, cuando se acreditan algunas conductas y otras no; (c) infundada, cuando no se acreditan los hechos o no constituyen infracción; (d) desechamiento, cuando opera causal de notoria improcedencia desde el inicio; (e) sobreseimiento, cuando después de admitida sobreviene causa que impide continuar (desistimiento procedente, muerte del denunciado persona física, hechos sin materia, prescripción declarada)",
+       "Únicamente absolución porque el INE carece de potestad sancionadora"],
+    c:1,
+    ex:"El catálogo de resoluciones es amplio y técnico. Cada sentido tiene exigencias específicas: la fundada requiere individualización de la sanción; la infundada exige motivación sobre la no acreditación; el desechamiento se funda en notoria improcedencia desde el origen; el sobreseimiento exige causa sobreviniente. Existen casos mixtos cuando hay múltiples conductas con resultados distintos. Errar el tipo de resolución (por ejemplo, resolver fundada cuando debió ser infundada por falta de pruebas) genera revocación en el TEPJF. La Subdirección entrena a sus resolutores en estas distinciones." },
+
+
+  /* ══════════════════════════════════
+     1.5  FASE IMPUGNATIVA  (1)
+  ══════════════════════════════════ */
+
+  // Q25 - directo
+  { sa:"1.5", sal:"Fase impugnativa", area:"Generalidades de los PAS", t:"dir",
+    q:"¿Cuáles son los medios de impugnación procedentes contra las resoluciones del Consejo General y de la Comisión de Quejas y Denuncias en materia de PAS?",
+    o:["Sólo el juicio de amparo directo ante la SCJN",
+       "(i) Recurso de Apelación (RAP), conforme a la LGSMIME, contra resoluciones del Consejo General en POS; competencia de la Sala Superior del TEPJF; (ii) Recurso de Revisión del Procedimiento Especial Sancionador (REP), contra resoluciones de la Sala Regional Especializada en PES; competencia de la Sala Superior; (iii) en algunos casos, juicio de revisión constitucional electoral o juicio para la protección de los derechos político-electorales del ciudadano (JDC), según los actos impugnados; (iv) impugnación específica contra acuerdos de medidas cautelares de la Comisión de Quejas y Denuncias",
+       "No hay impugnación posible; las resoluciones son definitivas e inatacables"],
+    c:1,
+    ex:"El sistema de medios de impugnación electoral está en la LGSMIME. Para PAS las vías típicas son: RAP (POS-Consejo General → Sala Superior); REP (PES-SRE → Sala Superior); y vías específicas para acuerdos de cautelares. Los plazos son cortos (4 días en muchos casos) y los requisitos formales estrictos. La Subdirección debe conocer estas vías para anticipar la impugnación al elaborar resoluciones: una resolución sólida resiste el RAP/REP. Las violaciones procesales (notificación, audiencia, motivación) son los argumentos más comunes de revocación." },
+
+
+  /* ══════════════════════════════════
+     2.1  PROCEDENCIA DEL PES  (5)
+  ══════════════════════════════════ */
+
+  // Q26 - directo
+  { sa:"2.1", sal:"Procedencia del PES", area:"Particularidades de los PAS", t:"dir",
+    q:"¿Cuáles son las conductas que dan lugar al Procedimiento Especial Sancionador conforme al artículo 470 de la LGIPE?",
+    o:["Cualquier conducta que un partido considere indebida sin restricción de materia",
+       "Las denuncias por hechos que: (i) violen lo establecido en la Base III del artículo 41 o en el séptimo párrafo del artículo 134 de la Constitución (uso indebido de recursos públicos en propaganda gubernamental, propaganda institucional con elementos personalizados); (ii) contravengan las normas sobre propaganda política o electoral en radio y televisión (contratación o adquisición indebida de tiempos); (iii) constituyan actos anticipados de precampaña o campaña; o (iv) incluyan calumnia. El factor común es la incidencia en el proceso electoral o en la equidad de la contienda",
+       "Únicamente delitos electorales tipificados en el Código Penal Federal"],
+    c:1,
+    ex:"El art. 470 LGIPE delimita la materia del PES: (1) violaciones a 41 base III y 134 párr. 7 — radio/TV y propaganda gubernamental; (2) actos anticipados; (3) calumnia. La razón es la urgencia: estas conductas afectan la equidad de la contienda y deben resolverse rápido para evitar daño consumado. El PES no abarca todas las infracciones electorales: las residuales van por POS. Determinar correctamente si una conducta es PES o POS desde la admisión es tarea central de la Subdirección. Una clasificación errónea genera reposición o nulidad." },
+
+  // Q27 - directo
+  { sa:"2.1", sal:"Procedencia del PES", area:"Particularidades de los PAS", t:"dir",
+    q:"¿Qué se entiende por 'actos anticipados de precampaña' y de 'campaña' en términos de la LGIPE?",
+    o:["Cualquier acto político realizado en cualquier época",
+       "Actos anticipados de precampaña: aquellos realizados con el propósito de obtener el respaldo de los militantes para lograr la postulación a una candidatura, fuera de los plazos legales de la precampaña. Actos anticipados de campaña: actos de expresión por cualquier medio que contengan llamados expresos al voto o se posicionen frente a un proceso electoral, realizados antes del inicio formal de las campañas. La Sala Superior ha desarrollado criterios para identificarlos: elementos personal, temporal y subjetivo (intencionalidad de impactar en el proceso)",
+       "Sólo los discursos pronunciados en plazas públicas durante días festivos"],
+    c:1,
+    ex:"La calificación de actos anticipados es de las más complejas. La Sala Superior ha decantado tres elementos: (1) personal — quién realiza el acto (precandidato, candidato, partido o tercero); (2) temporal — cuándo (antes del inicio formal de la etapa); (3) subjetivo o material — finalidad/intencionalidad de obtener apoyo o impactar en proceso electoral. La diferencia entre precampaña y campaña: precampaña dirige a militantes para postulación; campaña dirige al electorado. Casos típicos: bardas, lonas, redes sociales, eventos masivos antes de tiempo. La Sala Especializada y la Sala Superior han generado abundante jurisprudencia." },
+
+  // Q28 - caso práctico
+  { sa:"2.1", sal:"Procedencia del PES", area:"Particularidades de los PAS", t:"cas",
+    p:"Un servidor público en funciones publica en sus redes sociales personales un mensaje en el que felicita a un partido político por su 'gran trayectoria' y lo invita a 'seguir transformando al país', durante el periodo de campañas, fuera del horario laboral.",
+    pt:"Caso práctico · Uso indebido de recursos / Promoción personalizada",
+    q:"¿Cuál es el análisis jurídico técnicamente correcto?",
+    o:["No hay infracción porque la publicación es en redes personales y fuera de horario laboral",
+       "Procede analizar si la conducta vulnera el artículo 134, párrafo 7, constitucional, que ordena imparcialidad de los servidores públicos en el uso de los recursos para no influir en la equidad. Aun siendo redes personales, el cargo institucional acompaña al servidor; la jurisprudencia ha sostenido que el deber de imparcialidad opera 24/7 en periodo electoral. Debe valorarse si el contenido constituye llamado al voto, posicionamiento partidista o uso del cargo para promover causas electorales. En caso afirmativo, procede el PES; el resultado dependerá del análisis del contenido íntegro y contexto",
+       "Es delito penal automático, sin necesidad de procedimiento administrativo"],
+    c:1,
+    ex:"El art. 134.7 constitucional impone deber de imparcialidad y neutralidad a servidores públicos. El TEPJF ha extendido este deber a expresiones en redes sociales personales durante proceso electoral, pues la calidad institucional acompaña al servidor. Los criterios de análisis: contenido (¿llama al voto, posiciona?), contexto (¿proceso electoral?), persona (¿servidor en funciones?), medio (¿difusión amplia?). No basta lo personal de la cuenta para excluir responsabilidad. La Sala Especializada y la Sala Superior han decantado estos criterios en numerosas resoluciones (caso 'Eruviel', 'Mario Delgado', etc.)." },
+
+  // Q29 - directo
+  { sa:"2.1", sal:"Procedencia del PES", area:"Particularidades de los PAS", t:"dir",
+    q:"¿Qué se entiende por 'calumnia' en materia electoral conforme a la LGIPE y a los criterios del TEPJF?",
+    o:["Cualquier crítica negativa contra un partido o candidato",
+       "La imputación de hechos o delitos falsos con impacto en un proceso electoral. La calumnia exige: (i) imputación concreta y específica; (ii) que verse sobre hechos o delitos; (iii) que sean falsos (ausencia de veracidad); (iv) realizada con conocimiento de la falsedad o con desprecio temerario por la verdad; y (v) impacto electoral. La crítica política, la sátira y la opinión están protegidas por la libertad de expresión y no constituyen calumnia automáticamente",
+       "Únicamente las imputaciones realizadas en spots de televisión"],
+    c:1,
+    ex:"El art. 471 LGIPE tipifica la calumnia electoral. La Sala Superior ha decantado los elementos: imputación específica de hechos/delitos, falsedad demostrable, conocimiento de la falsedad o desprecio temerario, impacto electoral. La línea entre crítica protegida y calumnia es delicada: la libertad de expresión es robusta y la crítica al poder público está protegida. Sólo cuando hay imputaciones falsas con elementos dolosos se actualiza calumnia. El criterio 'estándar de protección reforzada' ampara mayor crítica a personajes públicos. Errar este análisis vulnera derechos fundamentales o protege impunemente la difamación electoral." },
+
+  // Q30 - relación
+  { sa:"2.1", sal:"Procedencia del PES", area:"Particularidades de los PAS", t:"rel",
+    relTitle:"Relacione cada conducta con su clasificación procedimental (PES o POS)",
+    colA:{ title:"Conducta", items:[
+      "Spot de radio que contiene calumnia contra candidato durante campaña",
+      "Aportación de fuente prohibida detectada en revisión de informe anual de partido",
+      "Acto público con llamado al voto realizado dos meses antes del inicio de campañas",
+      "Incumplimiento de obligación de transparencia por un partido fuera de proceso electoral"] },
+    colB:{ title:"Procedimiento aplicable", items:[
+      "a) PES — calumnia en radio durante proceso electoral (art. 470 LGIPE)",
+      "b) POS — infracciones residuales fuera de las hipótesis del art. 470, vinculadas a fiscalización ordinaria",
+      "c) PES — actos anticipados de campaña (art. 470 LGIPE)",
+      "d) POS — incumplimiento normativo fuera de proceso electoral",
+      "e) Procedimiento penal en cualquier caso"] },
+    q:"Seleccione la opción con las relaciones correctas:",
+    o:["1a, 2b, 3c, 4d",
+       "1c, 2a, 3b, 4d",
+       "1e, 2d, 3a, 4b"],
+    c:0,
+    ex:"(1) Calumnia en radio durante campaña → PES (a). (2) Aportación prohibida detectada en informe anual → POS de fiscalización (b). (3) Acto anticipado de campaña → PES (c). (4) Incumplimiento de transparencia fuera de proceso → POS (d). La opción 'e' es distractor: lo penal es vía paralela, no excluyente, y sólo procede para tipos específicos de la Ley General en Materia de Delitos Electorales. La clasificación correcta desde el inicio es vital: errores en esta etapa derivan en reposición y nulidad por el TEPJF, perdiendo tiempo crítico en proceso electoral." },
+
+
+  /* ══════════════════════════════════
+     2.2  SUSTANCIACIÓN DEL PES  (3)
+  ══════════════════════════════════ */
+
+  // Q31 - directo
+  { sa:"2.2", sal:"Sustanciación del PES", area:"Particularidades de los PAS", t:"dir",
+    q:"En el Procedimiento Especial Sancionador, ¿cuál es el plazo para que la UTCE remita el expediente a la Sala Regional Especializada del TEPJF para resolución?",
+    o:["30 días naturales contados desde la admisión",
+       "Una vez agotada la sustanciación (recepción, admisión, emplazamiento, audiencia, desahogo de pruebas y alegatos), la UTCE elabora el informe circunstanciado y, dentro de las 24 horas siguientes, remite el expediente a la Sala Regional Especializada del TEPJF. La Sala Especializada cuenta con 48 horas para citar a sesión y dictar resolución, salvo casos complejos. Estos plazos brevísimos reflejan la naturaleza sumarísima del PES",
+       "6 meses hábiles contados desde la última actuación"],
+    c:1,
+    ex:"El art. 476 LGIPE regula la fase de remisión y resolución del PES. Es el procedimiento más expedito del derecho electoral mexicano: plazos de horas, no de días. La UTCE prepara el informe circunstanciado (resumen de actuaciones, valoración preliminar de pruebas, propuesta de resolución no vinculante); lo remite a la SRE en 24 horas. La SRE dicta resolución en 48 horas. Esta velocidad es indispensable para que el PES tenga sentido: una resolución después del proceso electoral pierde efectividad. La Subdirección coordina la cadena con rigor cronométrico." },
+
+  // Q32 - secuencia
+  { sa:"2.2", sal:"Sustanciación del PES", area:"Particularidades de los PAS", t:"seq",
+    listadoTitle:"Etapas del Procedimiento Especial Sancionador (desordenadas):",
+    listado:[
+      "Resolución por la Sala Regional Especializada del TEPJF",
+      "Recepción de la queja por la UTCE",
+      "Audiencia de pruebas y alegatos en sede administrativa (UTCE)",
+      "Admisión y emplazamiento al denunciado con plazo breve",
+      "Remisión del expediente y del informe circunstanciado a la SRE",
+      "Análisis de medidas cautelares por la Comisión de Quejas y Denuncias, en su caso"],
+    q:"¿Cuál es el orden cronológico correcto?",
+    o:["2, 4, 6, 3, 5, 1",
+       "4, 2, 1, 5, 6, 3",
+       "2, 6, 4, 3, 5, 1"],
+    c:0,
+    ex:"Orden correcto del PES: (2) Recepción de queja → (4) Admisión y emplazamiento → (6) Cautelares (en su caso, paralelo) → (3) Audiencia de pruebas y alegatos en UTCE → (5) Remisión a SRE → (1) Resolución de la SRE. Notar dos rasgos clave: (a) la audiencia se desarrolla en sede administrativa (UTCE), no jurisdiccional; (b) las cautelares pueden tramitarse en paralelo desde la admisión. El cronograma típico va de 5 a 10 días totales. La Subdirección controla los plazos con precisión: cualquier retraso amenaza la oportunidad de la decisión." },
+
+  // Q33 - caso práctico
+  { sa:"2.2", sal:"Sustanciación del PES", area:"Particularidades de los PAS", t:"cas",
+    p:"En audiencia de pruebas y alegatos del PES, el denunciado presenta como prueba un dictamen pericial privado para acreditar que un audio que se le imputa fue manipulado. La UTCE debe decidir sobre la admisibilidad.",
+    pt:"Caso práctico · Pericial en PES",
+    q:"¿Cuál es la determinación procesalmente correcta?",
+    o:["Admitir la pericial sin restricción y suspender la audiencia para su desahogo",
+       "Desechar la pericial por improcedente en PES, dado que la naturaleza expedita del procedimiento es incompatible con su desahogo (art. 470 y siguientes LGIPE; criterios consolidados de la Sala Superior). El denunciado puede aportar el dictamen pericial privado como documental técnica para que se valore en lo que importa, pero no como pericial formal con desahogo. La UTCE puede, además, allegarse oficiosamente de análisis técnicos institucionales si lo estima necesario",
+       "Suspender el PES indefinidamente hasta que se desahogue formalmente la pericial"],
+    c:1,
+    ex:"El criterio sobre pericial en PES está consolidado: improcedente por incompatibilidad con plazos sumarísimos. El TEPJF ha reiterado: PES y pericial son incompatibles. Sin embargo, la parte puede aportar el dictamen como documental técnica privada (con menor valor probatorio, pero valorable). La autoridad puede suplir con análisis técnicos institucionales (oficialía electoral, áreas técnicas del INE). Suspender indefinidamente vulnera la finalidad del PES. La Subdirección documenta cuidadosamente la motivación del desechamiento para resistir impugnación posterior ante la SRE." },
+
+
+  /* ══════════════════════════════════
+     2.3  SUSTANCIACIÓN DEL POS  (4)
+  ══════════════════════════════════ */
+
+  // Q34 - directo
+  { sa:"2.3", sal:"Sustanciación del POS", area:"Particularidades de los PAS", t:"dir",
+    q:"En el Procedimiento Ordinario Sancionador, ¿cuál es el plazo que tiene el denunciado para contestar el emplazamiento?",
+    o:["48 horas improrrogables, sin opción de prórroga",
+       "5 días hábiles improrrogables, contados a partir del día siguiente al de la notificación, conforme al artículo 466 de la LGIPE; en este plazo el denunciado puede formular contestación, ofrecer y aportar pruebas, formular alegaciones preliminares y exponer excepciones. La omisión de contestar no implica presunción de culpabilidad, pero la autoridad resolverá con las constancias del expediente",
+       "30 días naturales prorrogables por acuerdo de las partes"],
+    c:1,
+    ex:"El POS tiene plazos más amplios que el PES, acordes con su naturaleza no expedita. El art. 466 LGIPE fija 5 días hábiles para contestación. La omisión de contestar no presume culpabilidad (presunción de inocencia), pero la autoridad resuelve con lo que obre en autos. Los 5 días son improrrogables; la jurisprudencia ha sido estricta: no caben justificaciones genéricas para extender. El denunciado debe presentar contestación, pruebas, alegatos preliminares y excepciones en este lapso. La Subdirección verifica que la notificación esté impecable para que el plazo corra correctamente." },
+
+  // Q35 - directo
+  { sa:"2.3", sal:"Sustanciación del POS", area:"Particularidades de los PAS", t:"dir",
+    q:"En el POS, ¿qué facultades de investigación tiene la UTCE durante la sustanciación?",
+    o:["Sólo recibir las pruebas que aporten las partes",
+       "La UTCE cuenta con amplias facultades de investigación: requerir información a cualquier autoridad federal, estatal o municipal; requerir información a personas físicas o morales; ordenar inspecciones oculares y diligencias para mejor proveer; allegarse de documentos públicos, hechos notorios y datos de fuentes oficiales; ordenar certificación por personal habilitado de contenidos en internet; admitir y desahogar todas las pruebas relevantes; y, cuando proceda y no esté vinculado al proceso electoral, ordenar prueba pericial. Estas facultades son herramientas para la verdad material",
+       "Únicamente expedir los acuerdos formales, sin facultades investigativas"],
+    c:1,
+    ex:"La UTCE en POS tiene amplias facultades para indagación de la verdad material. El deber de colaboración entre autoridades opera para requerimientos a otras autoridades. Pueden ordenarse inspecciones, requerimientos, certificaciones, etc. La pericial es admisible en POS no electoral. La filosofía del POS es resolver con plenitud probatoria, lo que justifica plazos más amplios y facultades más extensas que en PES. La Subdirección debe usar estas facultades con criterio: la sobreinvestigación dilata, la subinvestigación resuelve mal." },
+
+  // Q36 - caso práctico
+  { sa:"2.3", sal:"Sustanciación del POS", area:"Particularidades de los PAS", t:"cas",
+    p:"En la sustanciación de un POS, transcurren más de 18 meses sin actuación procesal por la complejidad del expediente. El denunciado solicita la caducidad o la prescripción del procedimiento. La autoridad debe decidir.",
+    pt:"Caso práctico · Caducidad y prescripción",
+    q:"¿Cuál es el análisis técnicamente correcto?",
+    o:["Decretar la caducidad por inactividad procesal automáticamente",
+       "Distinguir entre prescripción (de la facultad sancionadora — 3 años desde la comisión, art. 464.2 LGIPE) y caducidad (de la instancia procesal — figura no prevista expresamente en la LGIPE para PAS). El TEPJF ha sostenido que en PAS no opera caducidad de la instancia por inactividad cuando la inactividad es atribuible a la propia autoridad investigadora; la prescripción sí opera y debe declararse cuando se cumplan los 3 años. La autoridad debe revisar fechas con rigor y, si hay prescripción, declararla; si no, continuar con la sustanciación",
+       "Sobreseer automáticamente sin análisis"],
+    c:1,
+    ex:"Caducidad y prescripción son figuras distintas. Prescripción: extinción de la facultad sancionadora del Estado por el transcurso del tiempo (3 años en electoral, art. 464.2 LGIPE). Caducidad de instancia: pérdida de oportunidad procesal por inactividad de las partes; figura clásica civil pero no prevista en LGIPE para PAS. El TEPJF ha rechazado caducidad de instancia en PAS cuando la inactividad es de la autoridad. La prescripción sí debe declararse al cumplirse el plazo. La Subdirección debe controlar plazos con rigor para evitar que prescriba la facultad sancionadora durante la sustanciación." },
+
+  // Q37 - relación
+  { sa:"2.3", sal:"Sustanciación del POS", area:"Particularidades de los PAS", t:"rel",
+    relTitle:"Relacione cada acto procesal del POS con su plazo característico",
+    colA:{ title:"Acto procesal", items:[
+      "Plazo del denunciado para contestar el emplazamiento",
+      "Plazo de prescripción de la facultad sancionadora",
+      "Plazo de prevención al denunciante para subsanar requisitos",
+      "Plazo para impugnar la resolución del Consejo General"] },
+    colB:{ title:"Plazo aplicable", items:[
+      "a) 5 días hábiles improrrogables (art. 466 LGIPE)",
+      "b) 3 años contados desde la comisión de la infracción (art. 464.2 LGIPE)",
+      "c) 3 días hábiles para subsanar omisiones del escrito de queja (Reglamento de Quejas y Denuncias)",
+      "d) 4 días para Recurso de Apelación ante el TEPJF (LGSMIME)",
+      "e) 90 días naturales improrrogables sin excepción"] },
+    q:"Seleccione la opción con las relaciones correctas:",
+    o:["1a, 2b, 3c, 4d",
+       "1e, 2a, 3b, 4c",
+       "1c, 2d, 3a, 4b"],
+    c:0,
+    ex:"(1) Contestación del emplazamiento → 5 días hábiles (a). (2) Prescripción → 3 años (b). (3) Prevención → 3 días hábiles (c). (4) RAP → 4 días (d). La opción 'e' es distractor. El control riguroso de plazos es función central de la Subdirección. Errores frecuentes que vician el procedimiento: cómputo de hábiles vs naturales, contar a partir de notificación o del día siguiente, distinguir días-horas. El TEPJF anula resoluciones donde se confunden o vencen plazos críticos sin actuación. Cada plazo debe estar acreditado en el expediente con fecha cierta." },
+
+
+  /* ══════════════════════════════════
+     2.4  RESOLUCIÓN DEL POS  (3)
+  ══════════════════════════════════ */
+
+  // Q38 - directo
+  { sa:"2.4", sal:"Resolución del POS", area:"Particularidades de los PAS", t:"dir",
+    q:"Al imponer una sanción en POS, ¿qué elementos debe valorar el Consejo General para la individualización conforme al artículo 458 de la LGIPE?",
+    o:["Sólo la cuantía económica de la infracción",
+       "(I) La gravedad de la responsabilidad y la conveniencia de suprimir prácticas que vulneren las normas y bienes jurídicos tutelados; (II) las circunstancias de modo, tiempo y lugar; (III) las condiciones socioeconómicas del infractor; (IV) las condiciones externas y los medios de ejecución; (V) la reincidencia en el incumplimiento de obligaciones; (VI) en su caso, el monto del beneficio, lucro o daño económico; (VII) la intencionalidad o falta de cuidado (dolo/culpa). Todos los elementos deben aparecer razonados en la resolución para sustentar proporcionalidad",
+       "Basta con citar el artículo aplicable y aplicar la multa mínima por defecto"],
+    c:1,
+    ex:"La individualización es acto técnico de la mayor importancia. El art. 458.5 LGIPE enlista los factores: gravedad, modo-tiempo-lugar, condiciones del infractor, medios, reincidencia, beneficio/daño económico, dolo/culpa. La resolución debe razonar cada uno; el TEPJF anula sanciones no individualizadas por vulnerar proporcionalidad y debido proceso. Una resolución sólida incluye sección específica de calificación de la falta y de individualización, con tabla de factores agravantes/atenuantes. La Subdirección capacita y supervisa este aspecto crítico." },
+
+  // Q39 - directo
+  { sa:"2.4", sal:"Resolución del POS", area:"Particularidades de los PAS", t:"dir",
+    q:"¿Cuál es el catálogo de sanciones aplicables a partidos políticos por infracciones, conforme al artículo 456 de la LGIPE?",
+    o:["Únicamente la cancelación automática del registro",
+       "(I) Amonestación pública; (II) multa de hasta 10,000 días del valor diario de la UMA, según la gravedad; (III) en infracciones graves y reiteradas, multa de hasta el doble del monto ejercido en exceso o hasta el 200% del monto involucrado; (IV) reducción de hasta el 50% de las ministraciones del financiamiento público que le correspondan, por el periodo que señale la resolución; (V) interrupción de la transmisión de propaganda en radio y televisión; (VI) supresión total de la entrega de prerrogativas, por el periodo que señale la resolución; y (VII) cancelación del registro como partido político en casos de infracciones especialmente graves y sistemáticas",
+       "Sólo la prisión por hasta tres años para los dirigentes"],
+    c:1,
+    ex:"El art. 456 LGIPE establece el catálogo gradual: amonestación, multa por días de UMA, multa proporcional al monto involucrado, reducción de ministraciones, interrupción de propaganda, supresión total de prerrogativas, cancelación del registro. La gradualidad responde al principio de proporcionalidad. Para otros sujetos (candidatos, servidores públicos, ciudadanos, observadores) hay catálogos específicos en el mismo artículo. La elección de la sanción concreta exige fundamentación técnica robusta en la resolución, ligada a la individualización." },
+
+  // Q40 - caso práctico
+  { sa:"2.4", sal:"Resolución del POS", area:"Particularidades de los PAS", t:"cas",
+    p:"En la resolución de un POS, se acredita que un partido cometió una infracción grave por aportación de fuente prohibida ($800,000) y, simultáneamente, una infracción formal por presentación extemporánea del informe correspondiente. El proyecto propone aplicar una sola multa global por ambas conductas.",
+    pt:"Caso práctico · Concurso de infracciones e individualización",
+    q:"¿Cuál es la observación técnica correcta de la Subdirección al revisar el proyecto?",
+    o:["Aprobar el proyecto tal como está, una multa global es lo más eficiente",
+       "Observar al resolutor que cada infracción debe individualizarse por separado: (a) la aportación de fuente prohibida tiene su propio tipo y catálogo (multa proporcional al monto involucrado, hasta 200%); (b) la presentación extemporánea es infracción formal con sanción específica (multa por días de retraso). Cada conducta debe tener calificación, individualización y sanción propia, con análisis de los factores del art. 458 para cada una. Una multa global indiferenciada es revocable por falta de individualización conforme a jurisprudencia consolidada del TEPJF",
+       "Aplicar exclusivamente la sanción más alta y descartar la otra infracción"],
+    c:1,
+    ex:"El concurso de infracciones exige tratamiento diferenciado: cada conducta tiene su tipo, su gravedad, sus factores propios. La individualización debe hacerse por separado, con análisis de art. 458 para cada una. La sumatoria final puede acumular multas o aplicar la regla de absorción en algunos casos, pero el análisis previo siempre es individualizado. El TEPJF ha sido constante: sanciones globales no individualizadas son revocadas. La Subdirección, al supervisar proyectos, debe identificar este vicio frecuente y exigir reformulación. La calidad técnica de la resolución se mide en la calidad de la individualización." }
+
+];
+
+/* ═══════════════════════════════════════════════════
+   ALEATORIZACIÓN
+═══════════════════════════════════════════════════ */
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function shuffleOptions(q) {
+  const indices = [0, 1, 2];
+  const shuffled = shuffleArray(indices);
+  return { ...q, o: shuffled.map(i => q.o[i]), c: shuffled.indexOf(q.c) };
+}
+const SUBS = ["1.1","1.2","1.3","1.4","1.5","2.1","2.2","2.3","2.4"];
+const shuffledQ = SUBS.flatMap(sub =>
+  shuffleArray(Q.filter(q => q.sa === sub)).map(q => shuffleOptions(q))
+);
+Q.length = 0;
+shuffledQ.forEach(q => Q.push(q));
+
+const TIME_LIMIT = 50 * 60;
+let answers, revealed, current, timerInterval, secondsLeft;
+
+const SS = {
+  "1.1":{bg:"#e8eaf6",color:"#1a237e",icon:"📑"},
+  "1.2":{bg:"#e3f2fd",color:"#0d47a1",icon:"📨"},
+  "1.3":{bg:"#fff3e0",color:"#e65100",icon:"⏸️"},
+  "1.4":{bg:"#e8f5e9",color:"#1b5e20",icon:"📋"},
+  "1.5":{bg:"#ede7f6",color:"#311b92",icon:"⚖️"},
+  "2.1":{bg:"#ffebee",color:"#b71c1c",icon:"🚦"},
+  "2.2":{bg:"#fce4ec",color:"#880e4f",icon:"⚡"},
+  "2.3":{bg:"#e0f7fa",color:"#006064",icon:"🔍"},
+  "2.4":{bg:"#f3e5f5",color:"#4a148c",icon:"🏛️"}
+};
+
+const TYPE_LABELS = {
+  "dir":{ cls:"dir", label:"🟢 DIRECTO" },
+  "cas":{ cls:"cas", label:"🟠 CASO" },
+  "seq":{ cls:"seq", label:"🔵 SECUENCIA" },
+  "rel":{ cls:"rel", label:"🟣 RELACIÓN" }
+};
+
+function startExam() {
+  answers  = new Array(Q.length).fill(null);
+  revealed = new Array(Q.length).fill(false);
+  current  = 0;
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('examScreen').classList.remove('hidden');
+  document.getElementById('navBar').classList.remove('hidden');
+  renderQuestion(0);
+  startTimer();
+}
+
+function renderQuestion(idx) {
+  current = idx;
+  const q = Q[idx], sc = SS[q.sa] || {bg:"#fce4ec",color:"#880e4f",icon:"📌"};
+  const isR = revealed[idx], sel = answers[idx];
+
+  let ph = '';
+  if (q.p) ph = `<div class="passage"><div class="passage-label">📄 ${q.pt}</div>${q.p.replace(/\n/g,'<br>')}</div>`;
+
+  let listadoHTML = '';
+  if (q.t === 'seq' && q.listado) {
+    const items = q.listado.map((it, i) => `<li><strong>${i+1}.</strong> ${it}</li>`).join('');
+    listadoHTML = `<div class="listado">
+      <div class="listado-title">📋 ${q.listadoTitle || 'Elementos a ordenar'}</div>
+      <ul style="list-style:none;padding-left:0">${items}</ul>
+    </div>`;
+  }
+
+  let relHTML = '';
+  if (q.t === 'rel' && q.colA && q.colB) {
+    const aItems = q.colA.items.map((it, i) => `<li><strong>${i+1}.</strong> ${it}</li>`).join('');
+    const bItems = q.colB.items.map(it => `<li>${it}</li>`).join('');
+    relHTML = `<div class="listado">
+      <div class="listado-title">🔗 ${q.relTitle || 'Relacione las columnas'}</div>
+      <div class="rel-cols">
+        <div class="rel-col">
+          <div class="rel-col-title">${q.colA.title}</div>
+          <ul style="list-style:none;padding-left:0">${aItems}</ul>
+        </div>
+        <div class="rel-col">
+          <div class="rel-col-title">${q.colB.title}</div>
+          <ul>${bItems}</ul>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const L = ['A','B','C'];
+  const opts = q.o.map((o, i) => {
+    let cls = 'option', icon = '';
+    if (isR) {
+      cls += ' disabled';
+      if (i === q.c) { cls += ' correct'; icon = '<span class="opt-icon">✅</span>'; }
+      else if (i === sel && i !== q.c) { cls += ' incorrect'; icon = '<span class="opt-icon">❌</span>'; }
+    } else if (i === sel) cls += ' selected';
+    return `<div class="${cls}" onclick="selOpt(${idx},${i})">
+      <div class="option-letter">${L[i]}</div>
+      <div class="opt-text">${o}</div>${icon}
+    </div>`;
+  }).join('');
+
+  const ri = isR && sel !== null && sel !== q.c
+    ? ['A','B','C'][sel] + ' era incorrecta'
+    : '';
+
+  const typeInfo = TYPE_LABELS[q.t] || TYPE_LABELS["dir"];
+  const typeBadge = `<span class="q-type ${typeInfo.cls}">${typeInfo.label}</span>`;
+
+  document.getElementById('examScreen').innerHTML = `
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="q-badge" style="background:${sc.bg};color:${sc.color}">${sc.icon} ${q.sal}</span>
+        <div class="q-right">${typeBadge}<span class="q-num">${idx+1}/${Q.length}</span></div>
+      </div>
+      ${ph}
+      ${listadoHTML}
+      ${relHTML}
+      <div class="question-text">${q.q}</div>
+      <div class="options">${opts}</div>
+      <div class="explanation ${isR ? 'show' : ''}"><strong>${ri}${ri ? ' — ' : ''}Explicación:</strong> ${q.ex}</div>
+    </div>
+    ${!isR && answers[idx] !== null
+      ? `<div class="ver-sol-wrap"><button class="btn-ver-sol" onclick="rev(${idx})">Ver explicación 💡</button></div>`
+      : ''}
+  `;
+
+  document.getElementById('progressBar').style.width = ((idx+1)/Q.length*100) + '%';
+  document.getElementById('navCurrent').textContent = idx + 1;
+  document.getElementById('navTotal').textContent   = Q.length;
+  document.getElementById('btnPrev').disabled = idx === 0;
+  document.getElementById('btnNext').textContent = idx === Q.length-1 ? '🏁 Finalizar' : 'Sig. →';
+  window.scrollTo({top: 0, behavior: 'instant'});
+}
+
+function selOpt(qi, oi) { if (revealed[qi]) return; answers[qi] = oi; renderQuestion(qi); }
+function rev(idx) { revealed[idx] = true; renderQuestion(idx); }
+function nextQ() { if (current < Q.length-1) renderQuestion(current+1); else showResults(); }
+function prevQ() { if (current > 0) renderQuestion(current-1); }
+
+function startTimer() {
+  secondsLeft = TIME_LIMIT;
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = Math.floor(secondsLeft/60).toString().padStart(2,'0');
+    const s = (secondsLeft%60).toString().padStart(2,'0');
+    const el = document.getElementById('timer');
+    el.textContent = `${m}:${s}`;
+    el.className = 'timer' + (secondsLeft < 300 ? ' danger' : secondsLeft < 600 ? ' warning' : '');
+    if (secondsLeft <= 0) { clearInterval(timerInterval); showResults(); }
+  }, 1000);
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('examScreen').classList.add('hidden');
+  document.getElementById('navBar').classList.add('hidden');
+
+  const total    = Q.length;
+  const answered = answers.filter(a => a !== null).length;
+  const correct  = answers.filter((a, i) => a === Q[i].c).length;
+  const wrong    = answered - correct;
+  const skipped  = total - answered;
+  const pct      = Math.round(correct / total * 100);
+
+  const areas = {};
+  Q.forEach((q, i) => {
+    if (!areas[q.area]) areas[q.area] = {total:0, correct:0};
+    areas[q.area].total++;
+    if (answers[i] === q.c) areas[q.area].correct++;
+  });
+
+  const subs = {};
+  Q.forEach((q, i) => {
+    if (!subs[q.sa]) subs[q.sa] = {label:q.sal, total:0, correct:0};
+    subs[q.sa].total++;
+    if (answers[i] === q.c) subs[q.sa].correct++;
+  });
+
+  const types = {};
+  Q.forEach((q, i) => {
+    const t = q.t || "dir";
+    if (!types[t]) types[t] = {total:0, correct:0};
+    types[t].total++;
+    if (answers[i] === q.c) types[t].correct++;
+  });
+
+  const weak = Object.entries(subs).filter(([,s]) => s.correct/s.total < 0.6).map(([,s]) => s.label);
+  const cc   = pct >= 70 ? 'score-good' : pct >= 50 ? 'score-mid' : 'score-low';
+  const msg  = pct >= 80 ? '¡Excelente! Dominas los procedimientos administrativos sancionadores.'
+             : pct >= 60 ? 'Buen nivel. Refuerza los temas marcados.'
+             : 'Diagnóstico listo. Estudia los temas señalados antes del examen.';
+
+  const areaColors = {
+    "Generalidades de los PAS":     "#1a237e",
+    "Particularidades de los PAS":  "#b71c1c"
+  };
+
+  const rows = Object.entries(areas).map(([name, a]) => {
+    const p    = Math.round(a.correct / a.total * 100);
+    const icon = p >= 80 ? '✅' : p >= 60 ? '⚠️' : '❌';
+    const bc   = p >= 60
+      ? `linear-gradient(90deg,${areaColors[name]||'#880e4f'},#e91e8c)`
+      : 'linear-gradient(90deg,#c62828,#ef5350)';
+    return `<div class="area-row">
+      <div class="area-name">${icon} ${name}</div>
+      <div class="area-bar-wrap"><div class="area-bar" style="width:${p}%;background:${bc}"></div></div>
+      <div class="area-pct" style="color:${p>=60?'#880e4f':'#c62828'}">${p}%</div>
+    </div>`;
+  }).join('');
+
+  const typeLabelsMap = {"dir":"🟢 Directo","cas":"🟠 Caso","seq":"🔵 Secuencia","rel":"🟣 Relación"};
+  const typeRows = Object.entries(types).map(([t, a]) => {
+    const p = Math.round(a.correct / a.total * 100);
+    const bc = p >= 60
+      ? 'linear-gradient(90deg,#880e4f,#e91e8c)'
+      : 'linear-gradient(90deg,#c62828,#ef5350)';
+    return `<div class="area-row">
+      <div class="area-name">${typeLabelsMap[t]} (${a.correct}/${a.total})</div>
+      <div class="area-bar-wrap"><div class="area-bar" style="width:${p}%;background:${bc}"></div></div>
+      <div class="area-pct" style="color:${p>=60?'#880e4f':'#c62828'}">${p}%</div>
+    </div>`;
+  }).join('');
+
+  const wb = weak.length
+    ? `<div class="weak-banner"><h4>🎯 Estudia esto primero:</h4><p>Menos del 60% en estas subáreas. Son clave para el cargo.</p><div class="weak-tags">${weak.map(t=>`<span class="weak-tag">📌 ${t}</span>`).join('')}</div></div>`
+    : `<div style="background:#fce4ec;border-radius:10px;padding:13px;margin:13px 0;color:#880e4f;font-weight:600">✅ ¡Dominas todas las áreas!</div>`;
+
+  const tu = TIME_LIMIT - secondsLeft;
+  const tm = Math.floor(tu/60), ts = tu%60;
+
+  document.getElementById('resultsScreen').innerHTML = `
+    <div class="results-screen">
+      <div style="background:#fce4ec;border-radius:10px;padding:9px 14px;margin-bottom:16px;font-size:.8rem;color:#880e4f;font-weight:600">
+        ⚖️ DIAGNÓSTICO · SUBDIRECCIÓN PROCEDIMIENTOS ADM. SANCIONADORES — ${new Date().toLocaleDateString('es-MX')}
+      </div>
+      <div class="score-circle ${cc}">${pct}%<div class="score-sub">${correct}/${total}</div></div>
+      <h2 style="margin-bottom:7px">${msg}</h2>
+      <p style="margin-bottom:18px;color:#777;font-size:.83rem">Tiempo: ${tm}m ${ts}s · Respondidas: ${answered}/${total}</p>
+      <div class="stats-grid">
+        <div class="stat-card stat-correct"><div class="n">${correct}</div><div class="l">✅ Correctas</div></div>
+        <div class="stat-card stat-wrong"><div class="n">${wrong}</div><div class="l">❌ Incorrectas</div></div>
+        <div class="stat-card stat-skip"><div class="n">${skipped}</div><div class="l">⏭️ Saltadas</div></div>
+      </div>
+      ${wb}
+      <div style="text-align:left;margin-bottom:22px">
+        <h3 style="font-size:.87rem;font-weight:700;color:#444;margin-bottom:9px">Desempeño por área</h3>
+        ${rows}
+      </div>
+      <div style="text-align:left;margin-bottom:22px">
+        <h3 style="font-size:.87rem;font-weight:700;color:#444;margin-bottom:9px">Desempeño por tipo de reactivo</h3>
+        ${typeRows}
+      </div>
+      <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="reviewExam()">Revisar con explicaciones</button>
+        <button class="btn btn-secondary btn-lg" onclick="location.reload()">🔀 Nuevo diagnóstico</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('resultsScreen').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+function reviewExam() {
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('examScreen').classList.remove('hidden');
+  document.getElementById('navBar').classList.remove('hidden');
+  revealed = revealed.map(() => true);
+  renderQuestion(0);
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
